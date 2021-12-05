@@ -35,6 +35,6 @@ unsigned int MurmurHash2(const char *key, unsigned int len) {
   h ^= h >> 13;
   h *= m;
   h ^= h >> 15;
-
+ 
   return h;
 }
