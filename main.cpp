@@ -1,7 +1,10 @@
 #include <iostream>
 #include "hash.h"
+#include "string_generator.h"
 int main() {
   std::string s = "hello,world";
-  std::cout << MurmurHash2(&s[0], s.length());
-   
+  RandomStrings generator;
+  for(auto &i : generator.generate_set_strings(1000, 50)) {
+    std::cout << i << "\n";
+  }
 }
