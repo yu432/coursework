@@ -5,20 +5,20 @@
 
 class RandomStrings {
 private:
-    std::vector<char> letters{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+    std::vector<char> letters_{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                                     'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
                                     's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-    std::default_random_engine engine;
-    std::uniform_int_distribution<> distribution;
-    const size_t max_index = (letters.size());
+    std::default_random_engine engine_;
+    std::uniform_int_distribution<> distribution_;
+    const size_t max_index_ = (letters_.size());
 
 
   public:
     int Rand() {
-      return distribution(engine);
+      return distribution_(engine_);
     }
     char generate_char() {
-      return letters[ Rand() % max_index ];
+      return letters_[ Rand() % max_index_];
     }
     std::string generate_string(size_t size_of_str) {
       std::string result;
