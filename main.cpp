@@ -2,6 +2,7 @@
 #include "hash.h"
 #include "string_generator.h"
 #include "count_min.h"
+#include "conservative_count_min.h"
 int main() {
   std::string s = "hello,world";
   RandomStrings generator;

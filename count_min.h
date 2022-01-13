@@ -9,7 +9,7 @@ private:
   size_t columns_;
 
   //for check
-  std::unordered_set<std::string> storage_;
+  std::unordered_multiset<std::string> storage_;
 
 public:
   CountMin(const std::vector<std::function<unsigned int(const char*, unsigned int)>>& hashes, size_t columns) {
@@ -19,11 +19,15 @@ public:
     columns_ = columns;
   }
   void Update(const std::string& s) {
+    storage_.insert(s);
     for(size_t i = 0; i < rows_; i++) {
       table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] += 1;
     }
   }
   void Update(const std::string& s, int num) {
+    for(size_t i = 0; i < num; i++) {
+      storage_.insert(s);
+    }
     for(size_t i = 0; i < rows_; i++) {
       table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] += num;
     }
@@ -38,7 +42,9 @@ public:
     return true;
   }
 
-  bool TrueContains();
+  bool TrueContains(const std::string& s) {
+    return storage_.contains(s);
+  }
   void Print() {
     for(const auto& i : table_) {
       for(const auto& j : i) {
