@@ -3,7 +3,7 @@
 #include "hash.h"
 #include "max_min.h"
 #include "string_generator.h"
-#include <iostream>
+#include "pretty_print.h"
 int main() {
   RandomStrings generator;
   auto x = generator.generate_set_strings(15, 5);
@@ -11,6 +11,8 @@ int main() {
     std::cout << i << " ";
     std::cout << MurmurHash2(&i[0], i.size()) << "\n";
   }
+  std::cout << "\n";
+
   auto CM = CountMin(
       std::vector<std::function<unsigned int(const char *, unsigned int)>>{
           MurmurHash2, YuraHash},
