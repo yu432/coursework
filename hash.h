@@ -35,13 +35,13 @@ unsigned int MurmurHash2(const char *key, unsigned int len) {
   h ^= h >> 13;
   h *= m;
   h ^= h >> 15;
- 
+
   return h;
 }
 
 unsigned int YuraHash(const char *key, unsigned int len) {
   unsigned int ans = 0;
-  for(int i = 0 ; i < len; i++) {
+  for (int i = 0; i < len; i++) {
     ans += key[i];
   }
   return ans;
