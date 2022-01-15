@@ -3,6 +3,18 @@
 #include <string>
 #include <vector>
 
+int pow(int a, size_t b) {
+  if (b == 0) {
+    return 1;
+  } else if (b % 2 == 0) {
+    auto x = pow(a, b / 2);
+    return x * x;
+  } else {
+    auto x = pow(a, b / 2);
+    return a * x * x;
+  }
+}
+
 class RandomStrings {
 private:
   std::vector<char> letters_{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
@@ -33,4 +45,26 @@ public:
     }
     return res;
   };
+
+  std::vector<std::string>
+  gen_all_alphabet_str_with_const_sz(size_t size_of_string) {
+    std::vector<std::string> result;
+    if (size_of_string == 1) {
+      result.reserve(26);
+      for (auto &i : letters_) {
+        result.emplace_back(std::string(1, i));
+      }
+
+    } else {
+      auto prev_res = gen_all_alphabet_str_with_const_sz(size_of_string - 1);
+      result.reserve(pow(26, size_of_string));
+      for (auto &i : prev_res) {
+        for (char j = 'a'; j <= 'z'; j++) {
+          result.emplace_back(i + std::string(1, j));
+        }
+      }
+      return result;
+    }
+    return result;
+  }
 };

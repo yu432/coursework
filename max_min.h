@@ -37,6 +37,19 @@ public:
           num, table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_]);
     }
   }
+  int Count(const std::string &s) {
+    auto minimal =
+        table_[0][(hashes_[0].operator()(&s[0], s.size())) % columns_];
+    for (size_t i = 0; i < rows_; i++) {
+      if (table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] <
+          minimal) {
+        minimal =
+            table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_];
+      }
+    }
+    return minimal;
+  }
+  int TrueCount(const std::string &s) { return storage_.count(s); }
 
   bool Contains(const std::string &s) {
     for (size_t i = 0; i < rows_; i++) {
