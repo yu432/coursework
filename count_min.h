@@ -47,7 +47,7 @@ public:
     }
     return minimal;
   }
-  int TrueCount(const std::string &s) { return storage_.count(s); }
+  size_t TrueCount(const std::string &s) { return storage_.count(s); }
 
   bool Contains(const std::string &s) {
     for (size_t i = 0; i < rows_; i++) {
@@ -67,5 +67,13 @@ public:
       std::cout << "\n";
     }
     std::cout << "\n";
+  }
+
+  size_t EvaluateError(const std::vector<std::string>& strings) {
+    size_t sum_error = 0;
+    for(auto &string : strings) {
+      sum_error += (Count(string) - TrueCount(string));
+    }
+    return sum_error;
   }
 };

@@ -39,10 +39,24 @@ unsigned int MurmurHash2(const char *key, unsigned int len) {
   return h;
 }
 
-unsigned int YuraHash(const char *key, unsigned int len) {
-  unsigned int ans = 0;
-  for (int i = 0; i < len; i++) {
-    ans += key[i];
+unsigned int FNVHash(const char *pBuffer, unsigned int len) {
+  const uint64_t MagicPrime = 0x00000100000001b3;
+  uint64_t Hash = 0xcbf29ce484222325;
+  for (size_t i = 0; i < len; i++) {
+    Hash = (Hash ^ pBuffer[i]) * MagicPrime;
   }
-  return ans;
+  return Hash;
+}
+
+unsigned int JenkinsHash(const char *key, size_t len) {
+  unsigned int hash, i;
+  for (hash = i = 0; i < len; ++i) {
+    hash += key[i];
+    hash += (hash << 10);
+    hash ^= (hash >> 6);
+  }
+  hash += (hash << 3);
+  hash ^= (hash >> 11);
+  hash += (hash << 15);
+  return hash;
 }
