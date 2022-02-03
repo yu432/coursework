@@ -69,11 +69,9 @@ public:
     std::cout << "\n";
   }
 
-  size_t EvaluateError(const std::vector<std::string>& strings) {
-    size_t sum_error = 0;
+  void EvaluateError(const std::vector<std::string>& strings) {
     for(auto &string : strings) {
-      sum_error += (Count(string) - TrueCount(string));
+      std::cout << double((Count(string) - TrueCount(string))) / double(TrueCount(string)) << "\n";
     }
-    return sum_error;
   }
 };

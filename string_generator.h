@@ -46,25 +46,4 @@ public:
     return res;
   };
 
-  std::vector<std::string>
-  gen_all_alphabet_str_with_const_sz(size_t size_of_string) {
-    std::vector<std::string> result;
-    if (size_of_string == 1) {
-      result.reserve(26);
-      for (auto &i : letters_) {
-        result.emplace_back(std::string(1, i));
-      }
-
-    } else {
-      auto prev_res = gen_all_alphabet_str_with_const_sz(size_of_string - 1);
-      result.reserve(pow(26, size_of_string));
-      for (auto &i : prev_res) {
-        for (char j = 'a'; j <= 'z'; j++) {
-          result.emplace_back(i + std::string(1, j));
-        }
-      }
-      return result;
-    }
-    return result;
-  }
 };
