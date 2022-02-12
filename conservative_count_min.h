@@ -1,110 +1,87 @@
 #include "pretty_print.h"
-#include <algorithm>
-#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 class ConservativeCountMin {
 private:
-  std::vector<std::vector<int>> table_;
+  std::vector<int> table_;
   std::vector<std::function<unsigned int(const char *, unsigned int)>> hashes_;
-  size_t rows_;
-  size_t columns_;
 
   // for check
-  std::unordered_multiset<std::string> storage_;
+  std::unordered_map<std::string, int> storage_;
 
 public:
   ConservativeCountMin(
       const std::vector<std::function<unsigned int(const char *, unsigned int)>>
-          &hashes,
-      size_t columns) {
+          &hashes, size_t size_of_table) {
     hashes_ = hashes;
-    table_.resize(hashes.size(), std::vector<int>(columns));
-    rows_ = hashes.size();
-    columns_ = columns;
+    table_.resize(size_of_table);
   }
   void Update(const std::string &s) {
-    storage_.insert(s);
-
-    // finding minimal
-    int minimal =
-        table_[0][(hashes_[0].operator()(&s[0], s.size())) % columns_];
-
-    for (size_t i = 0; i < rows_; i++) {
-      if (table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] <
-          minimal) {
-        minimal =
-            table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_];
-      }
-    }
-
-    for (size_t i = 0; i < rows_; i++) {
-      table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] = std::max(
-          table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_],
-          minimal + 1);
-    }
+    Update(s, 1);
   }
-
   void Update(const std::string &s, int num) {
-    for (size_t i = 0; i < num; i++) {
-      storage_.insert(s);
-    }
+    storage_[s] += num;
+
     // finding minimal
     int minimal =
-        table_[0][(hashes_[0].operator()(&s[0], s.size())) % columns_];
+        table_[(hashes_[0].operator()(&s[0], s.size())) % table_.size()];
 
-    for (size_t i = 0; i < rows_; i++) {
-      if (table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] <
-          minimal) {
-        minimal =
-            table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_];
+    for (auto &hash : hashes_) {
+      if (table_[(hash.operator()(&s[0], s.size())) % table_.size()] < minimal) {
+        minimal = table_[(hash.operator()(&s[0], s.size())) % table_.size()];
       }
     }
 
-    for (size_t i = 0; i < rows_; i++) {
-      table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] = std::max(
-          table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_],
-          minimal + num);
+    //updating
+    for (auto &hash : hashes_) {
+        table_[(hash.operator()(&s[0], s.size())) % table_.size()] =
+          std::max(
+            table_[(hash.operator()(&s[0], s.size())) % table_.size()],
+            minimal + num);
     }
   }
+
   int Count(const std::string &s) {
     auto minimal =
-        table_[0][(hashes_[0].operator()(&s[0], s.size())) % columns_];
-    for (size_t i = 0; i < rows_; i++) {
-      if (table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] <
+        table_[(hashes_[0].operator()(&s[0], s.size())) % table_.size()];
+    for (auto &hash : hashes_) {
+      if (table_[(hash.operator()(&s[0], s.size())) % table_.size()] <
           minimal) {
         minimal =
-            table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_];
+            table_[(hash.operator()(&s[0], s.size())) % table_.size()];
       }
     }
     return minimal;
   }
-  size_t TrueCount(const std::string &s) { return storage_.count(s); }
+
+  size_t TrueCount(const std::string &s) { return storage_[s]; }
 
   bool Contains(const std::string &s) {
-    for (size_t i = 0; i < rows_; i++) {
-      if (table_[i][(hashes_[i].operator()(&s[0], s.size())) % columns_] < 1) {
+    for (auto &hash : hashes_) {
+      if (table_[(hash.operator()(&s[0], s.size())) % table_.size()] < 1) {
         return false;
       }
     }
     return true;
   }
 
-  bool TrueContains(const std::string &s) { return storage_.contains(s); }
+  bool TrueContains(const std::string &s) { return storage_[s]; }
   void Print() {
     for (const auto &i : table_) {
-      for (const auto &j : i) {
-        std::cout << j << " ";
-      }
-      std::cout << "\n";
+      std::cout << i << " ";
     }
     std::cout << "\n";
   }
 
   void EvaluateError(const std::vector<std::string>& strings) {
+    double mean = 0;
     for(auto &string : strings) {
+      if (TrueCount(string) == 0) {
+        continue;
+      }
+      mean += double((Count(string) - TrueCount(string))) / double(TrueCount(string));
       std::cout << double((Count(string) - TrueCount(string))) / double(TrueCount(string)) << "\n";
     }
-
+    std::cout << "Mean Error:" << mean / double(strings.size()) << "\n";
   }
-
 };

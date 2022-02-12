@@ -7,68 +7,72 @@
 #include "ziph.h"
 #include <random>
 #include <map>
+class Constants{
+public:
+  size_t SIZE_OF_TABLE = 300;
+  size_t COUNT_HASH_FUNC = 3;
+  size_t SIZE_OF_STREAM = 100000;
+  int TYPE = 3; // 1 for Uniform dist, 2 for Gaussian dist, 3 for Ziphian dist
+};
+
 int main() {
+  Constants Constants;
   RandomStrings generator;
   auto x = generator.generate_set_strings(100, 5);
+  /*
   for (auto &i : x) {
     std::cout << i << " ";
     std::cout << MurmurHash2(&i[0], i.size()) << " " << FNVHash(&i[0], i.size())
               << " " << JenkinsHash(&i[0], i.size()) << "\n";
   }
   std::cout << "\n";
-
+  */
   auto CM = CountMin(
       std::vector<std::function<unsigned int(const char *, unsigned int)>>{
           MurmurHash2, FNVHash, JenkinsHash},
-      100);
+      Constants.SIZE_OF_TABLE);
 
   auto ConservativeCM = ConservativeCountMin(
       std::vector<std::function<unsigned int(const char *, unsigned int)>>{
           MurmurHash2, FNVHash, JenkinsHash},
-      100);
-  int counter = 0;
-  /*  //  uniform distribution
-  for (size_t i = 0; i < 100000; i++) {
+      Constants.SIZE_OF_TABLE);
 
-    auto num = (generator.Rand()) % 100;
-    CM.Update(x[num]);
-    ConservativeCM.Update(x[num]);
+  if (Constants.TYPE == 1) {
+    for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
 
-  }
-  */
-
-  /*
-  std::random_device rd{};
-  std::mt19937 gen{rd()};
-  std::normal_distribution<> d{50, 12};
-  std::map<int, int>test_dist;
-  for(size_t i = 0; i < 100000; i++) {
-    int num = int(std::round(d(gen)));
-    //std::cout << num << " " << i << "\n";
-    if (num >= 0 && num < 100) {
+      auto num = (generator.Rand()) % Constants.SIZE_OF_TABLE;
       CM.Update(x[num]);
       ConservativeCM.Update(x[num]);
-      ++test_dist[num];
     }
+  } else if (Constants.TYPE == 2) {
 
-  }
-  for(auto i : test_dist) {
-    std::cout << i.first << " " << i.second << "\n";
-  }
-  */
-  std::default_random_engine generator_for_zipf(2);
-  zipfian_int_distribution<int>::param_type p(0, 99, 0.999);
-  zipfian_int_distribution<int> distribution(p);
-  std::map<int, int>test_dist;
-  for(size_t i = 0; i < 100000; i++) {
-    int num = distribution(generator_for_zipf);
-    CM.Update(x[num]);
-    ++test_dist[num];
-    ConservativeCM.Update(x[num]);
-    //std::cout << num << " " << ++counter << "\n";
-  }
-  for(auto i : test_dist) {
-    std::cout << i.first << " " << i.second << "\n";
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+    std::normal_distribution<> d{(Constants.SIZE_OF_TABLE / 2.0), 35};
+
+    for(size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
+      int num = int(std::round(d(gen)));
+      if (num >= 0 && num < Constants.SIZE_OF_TABLE) {
+        CM.Update(x[num]);
+        ConservativeCM.Update(x[num]);
+      }
+    }
+  } else if (Constants.TYPE == 3) {
+
+    std::default_random_engine generator_for_zipf(2);
+    zipfian_int_distribution<int>::param_type p(0, 99, 0.999);
+    zipfian_int_distribution<int> distribution(p);
+    //std::map<int, int> test_dist;
+    for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
+      int num = distribution(generator_for_zipf);
+      CM.Update(x[num]);
+      //++test_dist[num];
+      ConservativeCM.Update(x[num]);
+
+    }
+    //for (auto i : test_dist) {
+    //  std::cout << i.first << " " << i.second << "\n";
+    //}
   }
 
   CM.Print();
@@ -80,6 +84,3 @@ int main() {
   ConservativeCM.EvaluateError(x);
 
 }
-
-//без строк сделать
-//
