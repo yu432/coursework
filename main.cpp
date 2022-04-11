@@ -18,69 +18,58 @@ public:
 int main() {
   Constants Constants;
   RandomStrings generator;
-  auto x = generator.generate_set_strings(100, 5);
-  /*
-  for (auto &i : x) {
-    std::cout << i << " ";
-    std::cout << MurmurHash2(&i[0], i.size()) << " " << FNVHash(&i[0], i.size())
-              << " " << JenkinsHash(&i[0], i.size()) << "\n";
-  }
-  std::cout << "\n";
-  */
-  auto CM = CountMin(
-      std::vector<std::function<unsigned int(const char *, unsigned int)>>{
-          MurmurHash2, FNVHash, JenkinsHash},
-      Constants.SIZE_OF_TABLE);
+  for(int iter = 0; iter < 1000; iter++) {
+    auto x = generator.generate_set_strings(100, 5);
 
-  auto ConservativeCM = ConservativeCountMin(
-      std::vector<std::function<unsigned int(const char *, unsigned int)>>{
-          MurmurHash2, FNVHash, JenkinsHash},
-      Constants.SIZE_OF_TABLE);
+    auto CM = CountMin(
+        std::vector<std::function<unsigned int(const char *, unsigned int)>>{
+            MurmurHash2, FNVHash, JenkinsHash},
+        Constants.SIZE_OF_TABLE);
 
-  if (Constants.TYPE == 1) {
-    for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
+    auto ConservativeCM = ConservativeCountMin(
+        std::vector<std::function<unsigned int(const char *, unsigned int)>>{
+            MurmurHash2, FNVHash, JenkinsHash},
+        Constants.SIZE_OF_TABLE);
 
-      auto num = (generator.Rand()) % Constants.SIZE_OF_TABLE;
-      CM.Update(x[num]);
-      ConservativeCM.Update(x[num]);
-    }
-  } else if (Constants.TYPE == 2) {
+    if (Constants.TYPE == 1) {
+      for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
 
-    std::random_device rd{};
-    std::mt19937 gen{rd()};
-    std::normal_distribution<> d{(Constants.SIZE_OF_TABLE / 2.0), 35};
+        auto num = (generator.Rand()) % Constants.SIZE_OF_TABLE;
+        CM.Update(x[num]);
+        ConservativeCM.Update(x[num]);
+      }
 
-    for(size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
-      int num = int(std::round(d(gen)));
-      if (num >= 0 && num < Constants.SIZE_OF_TABLE) {
+    } else if (Constants.TYPE == 2) {
+      std::random_device rd{};
+      std::mt19937 gen{rd()};
+      std::normal_distribution<> d{(Constants.SIZE_OF_TABLE / 2.0), 35};
+
+      for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
+        int num = int(std::round(d(gen)));
+        if (num >= 0 && num < Constants.SIZE_OF_TABLE) {
+          CM.Update(x[num]);
+          ConservativeCM.Update(x[num]);
+        }
+      }
+
+    } else if (Constants.TYPE == 3) {
+      int rand_int = random();
+      std::default_random_engine generator_for_zipf(rand_int);
+      zipfian_int_distribution<int>::param_type p(0, 99, 0.999);
+      zipfian_int_distribution<int> distribution(p);
+      for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
+        int num = distribution(generator_for_zipf);
         CM.Update(x[num]);
         ConservativeCM.Update(x[num]);
       }
     }
-  } else if (Constants.TYPE == 3) {
 
-    std::default_random_engine generator_for_zipf(2);
-    zipfian_int_distribution<int>::param_type p(0, 99, 0.999);
-    zipfian_int_distribution<int> distribution(p);
-    //std::map<int, int> test_dist;
-    for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
-      int num = distribution(generator_for_zipf);
-      CM.Update(x[num]);
-      //++test_dist[num];
-      ConservativeCM.Update(x[num]);
+    //CM.Print();
+    //ConservativeCM.Print();
 
-    }
-    //for (auto i : test_dist) {
-    //  std::cout << i.first << " " << i.second << "\n";
-    //}
+    std::cout << "CM error:\n";
+    CM.EvaluateError(x);
+    std::cout << "Conservative CM error:\n";
+    ConservativeCM.EvaluateError(x);
   }
-
-  CM.Print();
-  ConservativeCM.Print();
-
-  std::cout <<"CM error:\n";
-  CM.EvaluateError(x);
-  std::cout <<"Conservative CM error:\n";
-  ConservativeCM.EvaluateError(x);
-
 }

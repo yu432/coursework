@@ -80,8 +80,9 @@ public:
         continue;
       }
       mean += double((Count(string) - TrueCount(string))) / double(TrueCount(string));
-      std::cout << double((Count(string) - TrueCount(string))) / double(TrueCount(string)) << "\n";
+      std::cout << double((Count(string) - TrueCount(string))) / double(TrueCount(string)) << " ";
     }
-    std::cout << "Mean Error:" << mean / double(strings.size()) << "\n";
+    std::cout << "\n";
+    //std::cout << "Mean Error:" << mean / double(strings.size()) << "\n";
   }
 };
