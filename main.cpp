@@ -1,17 +1,20 @@
+#include <random>
+#include <map>
+
 #include "conservative_count_min.h"
 #include "count_min.h"
 #include "hash.h"
 #include "max_min.h"
-#include "pretty_print.h"
 #include "string_generator.h"
 #include "ziph.h"
-#include <random>
-#include <map>
+
 class Constants{
 public:
   size_t SIZE_OF_TABLE = 300;
-  size_t COUNT_HASH_FUNC = 3;
   size_t SIZE_OF_STREAM = 100000;
+  std::vector<std::function<unsigned int(const char *, unsigned int)>> VECTOR_HASHES{MurmurHash_1,
+                                                                                     MurmurHash_2,
+                                                                                     MurmurHash_3};
   int TYPE = 3; // 1 for Uniform dist, 2 for Gaussian dist, 3 for Ziphian dist
 };
 
@@ -22,13 +25,11 @@ int main() {
     auto x = generator.generate_set_strings(100, 5);
 
     auto CM = CountMin(
-        std::vector<std::function<unsigned int(const char *, unsigned int)>>{
-            MurmurHash2, FNVHash, JenkinsHash},
+        Constants.VECTOR_HASHES,
         Constants.SIZE_OF_TABLE);
 
     auto ConservativeCM = ConservativeCountMin(
-        std::vector<std::function<unsigned int(const char *, unsigned int)>>{
-            MurmurHash2, FNVHash, JenkinsHash},
+        Constants.VECTOR_HASHES,
         Constants.SIZE_OF_TABLE);
 
     if (Constants.TYPE == 1) {

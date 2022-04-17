@@ -1,5 +1,5 @@
-#include "pretty_print.h"
 #include <unordered_map>
+#include <iostream>
 #include <vector>
 class ConservativeCountMin {
 private:

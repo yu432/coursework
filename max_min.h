@@ -1,4 +1,4 @@
-#include "pretty_print.h"
+#include <iostream>
 #include <unordered_set>
 #include <vector>
 class MaxMin {

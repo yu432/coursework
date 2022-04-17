@@ -1,5 +1,14 @@
+import subprocess
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+
+compile_cpp = ["clang++", "-std=c++20", "main.cpp"]
+process_one = subprocess.Popen(compile_cpp, stdout=subprocess.PIPE)
+
+run_cpp = ["./a.out"]
+process_two = subprocess.run(run_cpp, stdout=open('output.txt', 'w'))
 
 f = open("output.txt")
 counter = 0
@@ -23,7 +32,6 @@ mean_conservative = np.mean(errors_conservative, axis=0)
 
 plt.plot(mean_classic, 'r')
 plt.plot(mean_conservative, 'b')
-
 
 plt.show()
 
