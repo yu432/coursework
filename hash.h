@@ -1,6 +1,6 @@
 unsigned int MurmurHash_1(const char *key, unsigned int len) {
   const unsigned int m = 0x5bd1e995;
-  const unsigned int seed = 0;
+  const unsigned int seed = 298117;
   const int r = 24;
   unsigned int h = seed ^ len;
   const auto *data = (const unsigned char *)key;

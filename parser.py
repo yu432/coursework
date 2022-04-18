@@ -6,7 +6,7 @@ import os
 
 compile_cpp = ["clang++", "-std=c++20", "main.cpp"]
 process_one = subprocess.Popen(compile_cpp, stdout=subprocess.PIPE)
-
+process_one.wait()
 run_cpp = ["./a.out"]
 process_two = subprocess.run(run_cpp, stdout=open('output.txt', 'w'))
 

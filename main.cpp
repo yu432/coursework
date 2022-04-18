@@ -1,5 +1,6 @@
 #include <random>
 #include <map>
+#include <functional>
 
 #include "conservative_count_min.h"
 #include "count_min.h"
@@ -21,7 +22,7 @@ public:
 int main() {
   Constants Constants;
   RandomStrings generator;
-  for(int iter = 0; iter < 1000; iter++) {
+  for(int iter = 0; iter < 100; iter++) {
     auto x = generator.generate_set_strings(100, 5);
 
     auto CM = CountMin(
