@@ -1,6 +1,15 @@
+extern unsigned int seed_for_hash_1;
+extern unsigned int seed_for_hash_2;
+extern unsigned int seed_for_hash_3;
+
+extern unsigned int start_num_1;
+extern unsigned int start_num_2;
+extern unsigned int start_num_3;
+
+
 unsigned int MurmurHash_1(const char *key, unsigned int len) {
-  const unsigned int m = 0x5bd1e995;
-  const unsigned int seed = 298117;
+  const unsigned int m = start_num_1;
+  const unsigned int seed = seed_for_hash_1;
   const int r = 24;
   unsigned int h = seed ^ len;
   const auto *data = (const unsigned char *)key;
@@ -40,8 +49,8 @@ unsigned int MurmurHash_1(const char *key, unsigned int len) {
 }
 
 unsigned int MurmurHash_2(const char *key, unsigned int len) {
-  const unsigned int m = 0x5bd1e995;
-  const unsigned int seed = 100500;
+  const unsigned int m = start_num_2;
+  const unsigned int seed = seed_for_hash_2;
   const int r = 24;
   unsigned int h = seed ^ len;
   const auto *data = (const unsigned char *)key;
@@ -81,8 +90,8 @@ unsigned int MurmurHash_2(const char *key, unsigned int len) {
 }
 
 unsigned int MurmurHash_3(const char *key, unsigned int len) {
-  const unsigned int m = 0x5bd1e995;
-  const unsigned int seed = 2603;
+  const unsigned int m = start_num_3;
+  const unsigned int seed = seed_for_hash_3;
   const int r = 24;
   unsigned int h = seed ^ len;
   const auto *data = (const unsigned char *)key;

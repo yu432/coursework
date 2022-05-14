@@ -83,7 +83,7 @@ public:
        : M_a(_a), M_b(_b), M_theta(__theta),
          M_zeta(zeta(M_b - M_a + 1, __theta)), M_zeta2theta(zeta(2, __theta))
    {
-     assert(M_a <= M_b && M_theta > 0.0 && M_theta < 1.0);
+     assert(M_a <= M_b && M_theta > 0.0);
    }
 
    explicit param_type(IntType __a, IntType __b, double __theta, double __zeta)

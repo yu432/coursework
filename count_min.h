@@ -60,15 +60,15 @@ public:
   }
 
   void EvaluateError(const std::vector<std::string>& strings) {
-    double mean = 0;
     for(auto &string : strings) {
+      /*
       if (TrueCount(string) == 0) {
+        std::cout << "0 ";
         continue;
       }
-      mean += double((Count(string) - TrueCount(string))) / double(TrueCount(string));
-      std::cout << double((Count(string) - TrueCount(string))) / double(TrueCount(string)) << " ";
+       */
+      std::cout << double((Count(string) - TrueCount(string))) << " ";
     }
     std::cout << "\n";
-    //std::cout << "Mean Error:" << mean / double(strings.size()) << "\n";
   }
 };
