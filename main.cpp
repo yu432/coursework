@@ -20,19 +20,23 @@ unsigned int start_num_3 = 131;
 
 class Constants{
 public:
-  size_t SIZE_OF_TABLE = 300;
-  size_t SIZE_OF_STREAM = 50000;
+  size_t SIZE_OF_TABLE = 5000;
+  size_t SIZE_OF_STREAM = 5000;
   std::vector<std::function<unsigned int(const char *, unsigned int)>> VECTOR_HASHES{MurmurHash_1,
                                                                                      MurmurHash_2,
                                                                                      MurmurHash_3};
   int TYPE = 3; // 1 for Uniform dist, 2 for Gaussian dist, 3 for Ziphian dist
-  size_t COUNT_DIFFERENT_ELEMS_IN_SET = 10000;
+  size_t COUNT_DIFFERENT_ELEMS_IN_SET = 1000;
   size_t SIZE_OF_STRING = 5;
 };
 
 int main(int argc, char** argv) {
   Constants Constants;
   RandomStrings generator(std::stoi(argv[1]));
+
+  int gen = generator.randd();
+  std::default_random_engine generator_for_zipf(gen);
+
   for(int iter = 0; iter < std::stoi(argv[2]); iter++) {
     seed_for_hash_1 = generator.randd();
     seed_for_hash_2 = seed_for_hash_1;
@@ -56,7 +60,7 @@ int main(int argc, char** argv) {
     if (Constants.TYPE == 1) {
       for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
 
-        auto num = (generator.randd()) % Constants.SIZE_OF_TABLE;
+        auto num = (generator.randd()) % Constants.COUNT_DIFFERENT_ELEMS_IN_SET;
         CM.Update(x[num]);
         ConservativeCM.Update(x[num]);
       }
@@ -64,25 +68,25 @@ int main(int argc, char** argv) {
     } else if (Constants.TYPE == 2) {
       std::random_device rd{};
       std::mt19937 gen{rd()};
-      std::normal_distribution<> d{(Constants.SIZE_OF_TABLE / 2.0), 35};
+      std::normal_distribution<> d{(Constants.COUNT_DIFFERENT_ELEMS_IN_SET / 2.0), 100};
 
       for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
         int num = int(std::round(d(gen)));
-        if (num >= 0 && num < Constants.SIZE_OF_TABLE) {
+        if (num >= 0 && num < Constants.COUNT_DIFFERENT_ELEMS_IN_SET) {
           CM.Update(x[num]);
           ConservativeCM.Update(x[num]);
         }
       }
 
     } else if (Constants.TYPE == 3) {
-      int gen = generator.randd();
-      std::default_random_engine generator_for_zipf(gen);
+
+      //zipf_distribution ziph(Constants.COUNT_DIFFERENT_ELEMS_IN_SET - 1, 0.99);
       zipfian_int_distribution<int>::param_type p(0, Constants.COUNT_DIFFERENT_ELEMS_IN_SET - 1, 0.99);
       zipfian_int_distribution<int> distribution(p);
       std::map<int, int> for_dist;
       for (size_t i = 0; i < Constants.SIZE_OF_STREAM; i++) {
         int num = distribution(generator_for_zipf);
-        if (num >= 0 && num < Constants.SIZE_OF_TABLE) {
+        if (num >= 0 && num < Constants.COUNT_DIFFERENT_ELEMS_IN_SET) {
           ++for_dist[num];
           CM.Update(x[num]);
           ConservativeCM.Update(x[num]);

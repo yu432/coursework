@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-seed = "89"
-count_streams = "1000"
+seed = "88129"
+count_streams = "10000"
 
 compile_cpp = ["clang++", "-std=c++20", "main.cpp"]
 process_one = subprocess.Popen(compile_cpp, stdout=subprocess.PIPE)
@@ -37,6 +37,7 @@ mean_conservative = np.mean(errors_conservative, axis=0)
 plt.plot(mean_classic, 'o', color='r', markersize=2)
 plt.plot(mean_conservative, 'o', color='b', markersize=2)
 ##plt.yscale('log')
+
 plt.xscale('log')
 plt.show()
 

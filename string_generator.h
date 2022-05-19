@@ -7,7 +7,7 @@
 
 class RandomStrings {
 private:
-  std::vector<char> letters_{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+  const std::vector<char> letters_{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                              'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
                              's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
   std::mt19937 mt;
@@ -25,7 +25,7 @@ public:
     for (size_t i = 0; i < size_of_str; ++i) {
       result.push_back(generate_char());
     }
-    return result;
+    return std::move(result);
   }
 
   std::vector<std::string> generate_set_strings(size_t size_of_set,
@@ -37,5 +37,9 @@ public:
     }
     return res;
   };
+
+  auto return_mt() {
+    return mt;
+  }
 
 };

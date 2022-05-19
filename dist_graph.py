@@ -8,4 +8,5 @@ for i in f:
     x.append(int(a[1]))
     y.append(int(a[2]))
 plt.plot(x, y)
+plt.xscale('log')
 plt.show()
