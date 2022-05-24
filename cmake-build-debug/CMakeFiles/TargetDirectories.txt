@@ -1,3 +1,0 @@
-/home/yu432/coursework/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/yu432/coursework/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/yu432/coursework/cmake-build-debug/CMakeFiles/coursework.dir
